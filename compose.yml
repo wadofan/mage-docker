@@ -1,0 +1,6 @@
+services:
+  scific:
+    image: scific
+    ports:
+      - 80:80
+      - 443:443
