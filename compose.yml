@@ -6,4 +6,4 @@ services:
       - 4433:443
     volumes:
       - ./scific:/usr/local/apache2/htdocs
-      - ./logs:/usr/local/apache2/logs
+      - ./logs:/usr/local/apache2/logs/httpd
