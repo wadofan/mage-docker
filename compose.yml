@@ -1,9 +1,9 @@
 services:
   scific:
-    image: scific
+    build: .
     ports:
       - 8080:80
       - 4433:443
     volumes:
+      - ./scific:/usr/local/apache2/htdocs
       - ./logs:/usr/local/apache2/logs
-      # сделай что бы сайт вот тут доп строкой подключался в качестве волюма, а image оставь чисто с кастомной конфигурацией
