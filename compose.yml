@@ -1,6 +1,6 @@
 services:
-  scific:
-    build: .
+  apache:
+    build: ./apache
     ports:
       - 8080:80
       - 4433:443
