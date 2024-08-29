@@ -1,9 +1,25 @@
+networks:
+  scific:
+    driver: bridge
+
 services:
   apache:
     build: ./apache
-    ports:
-      - 8080:80
-      - 4433:443
+#    ports:
+#      - 8080:80
+#      - 4433:443
     volumes:
       - ./scific:/usr/local/apache2/htdocs
-      - ./logs:/usr/local/apache2/logs/httpd
+      - ./apache/logs:/usr/local/apache2/logs/httpd
+    networks:
+      - scific
+  
+  nginx:
+    image: nginx
+    ports:
+    - 80:80
+    volumes:
+    - ./nginx/logs:/var/log/nginx
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - scific
