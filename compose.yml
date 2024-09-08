@@ -1,0 +1,22 @@
+networks:
+  scific:
+    driver: bridge
+
+services:
+  apache:
+    build: ./apache
+    volumes:
+      - ./scific:/usr/local/apache2/htdocs
+      - ./apache/logs:/usr/local/apache2/logs/httpd
+    networks:
+      - scific
+  
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - scific
