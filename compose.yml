@@ -1,9 +1,10 @@
 networks:
   scific:
+    driver: bridge
     ipam:
-      driver: default
       config:
         - subnet: 192.168.0.0/29
+          gateway: 192.168.0.1
 
 services:
   apache:
