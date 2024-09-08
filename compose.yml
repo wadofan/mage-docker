@@ -1,6 +1,9 @@
 networks:
   scific:
-    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/29
 
 services:
   apache:
@@ -9,7 +12,8 @@ services:
       - ./scific:/usr/local/apache2/htdocs
       - ./apache/logs:/usr/local/apache2/logs/httpd
     networks:
-      - scific
+      scific:
+        ipv4_address: 192.168.0.2
   
   nginx:
     image: nginx
@@ -19,4 +23,5 @@ services:
       - ./nginx/logs:/var/log/nginx
       - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
-      - scific
+      scific:
+        ipv4_address: 192.168.0.3
