@@ -1,22 +1,40 @@
 networks:
   scific:
+    name: mage-scific
     driver: bridge
 
 services:
   apache:
+    container_name: mage-apache
     build: ./apache
+    image: mage/apache
     volumes:
       - ./scific:/usr/local/apache2/htdocs
       - ./apache/logs:/usr/local/apache2/logs/httpd
     networks:
       - scific
-  
+
   nginx:
+    container_name: mage-nginx
     image: nginx
     ports:
       - 80:80
+      - 443:443
     volumes:
+      - ./letsencrypt:/etc/nginx/cert.d
       - ./nginx/logs:/var/log/nginx
       - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
       - scific
+    # depends_on:
+    #   - certbot
+
+  # certbot:
+  #   image: certbot/certbot
+  #   command: > 
+  #     certonly --standalone --register-unsafely-without-email
+  #     --agree-tos -d [[...]] -n
+  #   volumes:
+  #     - ./letsencrypt/log:/var/log/letsencrypt
+  #     - ./letsencrypt/etc:/etc/letsencrypt
+  #     - ./letsencrypt/lib:/var/lib/letsencrypt
