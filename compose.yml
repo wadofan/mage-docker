@@ -9,8 +9,8 @@ services:
     build: ./apache
     image: mage/apache
     volumes:
-      - ./scific:/usr/local/apache2/htdocs
-      - ./apache/logs:/usr/local/apache2/logs/httpd
+      - ./apache/logs:/usr/local/apache2/logs/httpd:rw
+      - ./scific:/usr/local/apache2/htdocs:ro
     networks:
       - scific
 
@@ -21,20 +21,25 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./letsencrypt:/etc/nginx/cert.d
-      - ./nginx/logs:/var/log/nginx
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx:rw
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./letsencrypt/conf/live:/etc/nginx/cert.d:ro
+      - ./letsencrypt/acme:/var/www/certbot:ro
     networks:
       - scific
-    # depends_on:
-    #   - certbot
+    # restart: unless-stopped
 
   # certbot:
+  #   container_name: mage-certbot
   #   image: certbot/certbot
-  #   command: > 
-  #     certonly --standalone --register-unsafely-without-email
-  #     --agree-tos -d [[...]] -n
+  #   entrypoint: >
+  #     certbot certonly 
+  #     --webroot --webroot-path /var/www/certbot/
+  #     --noninteractive --agree-tos
+  #     --email {{ email }} --no-eff-email
+  #     --cert-name scific -d {{ domain }} && 
+  #   command: "tail -f /var/log/letsencrypt"
   #   volumes:
-  #     - ./letsencrypt/log:/var/log/letsencrypt
-  #     - ./letsencrypt/etc:/etc/letsencrypt
-  #     - ./letsencrypt/lib:/var/lib/letsencrypt
+  #     - ./letsencrypt/conf:/etc/letsencrypt:rw
+  #     - ./letsencrypt/acme:/var/www/certbot:rw
+  #     - ./letsencrypt/crontab:/etc/crontab:ro
