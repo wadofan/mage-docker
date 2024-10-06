@@ -23,6 +23,7 @@ services:
     volumes:
       - ./nginx/logs:/var/log/nginx:rw
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/crontab:/etc/crontab:ro
       - ./letsencrypt/conf/live:/etc/nginx/cert.d:ro
       - ./letsencrypt/acme:/var/www/certbot:ro
     networks:
@@ -43,3 +44,4 @@ services:
   #     - ./letsencrypt/conf:/etc/letsencrypt:rw
   #     - ./letsencrypt/acme:/var/www/certbot:rw
   #     - ./letsencrypt/crontab:/etc/crontab:ro
+  #   depends_on: nginx

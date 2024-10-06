@@ -1,0 +1,2 @@
+# 01:01, first day of any month
+1 1 1 * * root certbot renew -q
