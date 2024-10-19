@@ -1,6 +1,6 @@
 networks:
   scific:
-    name: mage-scific
+    name: mage-net
     driver: bridge
 
 services:
@@ -12,7 +12,8 @@ services:
       - ./apache/logs:/usr/local/apache2/logs/httpd:rw
       - ./scific:/usr/local/apache2/htdocs:ro
     networks:
-      - scific
+      - mage-net
+    # restart: unless-stopped
 
   nginx:
     container_name: mage-nginx
@@ -27,7 +28,7 @@ services:
       - ./letsencrypt/conf/live:/etc/nginx/cert.d:ro
       - ./letsencrypt/acme:/var/www/certbot:ro
     networks:
-      - scific
+      - mage-net
     # restart: unless-stopped
 
   # certbot:
@@ -44,4 +45,6 @@ services:
   #     - ./letsencrypt/conf:/etc/letsencrypt:rw
   #     - ./letsencrypt/acme:/var/www/certbot:rw
   #     - ./letsencrypt/crontab:/etc/crontab:ro
+  #   networks:
+  #     - mage-net
   #   depends_on: nginx
