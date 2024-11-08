@@ -7,13 +7,12 @@ services:
   apache:
     container_name: mage-apache
     build: ./apache
-    image: mage/apache
     volumes:
       - ./apache/logs:/usr/local/apache2/logs/httpd:rw
       - ./scific:/usr/local/apache2/htdocs:ro
     networks:
       - mage
-    # restart: unless-stopped
+    restart: unless-stopped
 
   nginx:
     container_name: mage-nginx
@@ -28,21 +27,20 @@ services:
       - ./letsencrypt/acme:/var/www/certbot:ro
     networks:
       - mage
-    # restart: unless-stopped
+    restart: unless-stopped
 
-  # certbot:
-  #   container_name: mage-certbot
-  #   image: certbot/certbot
-  #   entrypoint: >
-  #     certbot certonly 
-  #     --webroot --webroot-path /var/www/certbot/
-  #     --noninteractive --agree-tos
-  #     --email {{ email }} --no-eff-email
-  #     --cert-name scific -d {{ domain }} && 
-  #   command: "tail -f /var/log/letsencrypt"
-  #   volumes:
-  #     - ./letsencrypt/conf:/etc/letsencrypt:rw
-  #     - ./letsencrypt/acme:/var/www/certbot:rw
-  #   networks:
-  #     - mage
-  #   depends_on: nginx
+    certbot:
+      container_name: mage-certbot
+      image: certbot/certbot
+      command: >
+        certonly --webroot 
+        --webroot-path /var/www/certbot/
+        --noninteractive --agree-tos
+        --email ${LETS_EMAIL} --no-eff-email
+        --cert-name scific -d ${LETS_DOMAIN}
+      volumes:
+        - ./letsencrypt/conf:/etc/letsencrypt:rw
+        - ./letsencrypt/acme:/var/www/certbot:rw
+      networks:
+        - mage
+      depends_on: nginx
