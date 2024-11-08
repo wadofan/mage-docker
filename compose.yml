@@ -29,18 +29,19 @@ services:
       - mage
     restart: unless-stopped
 
-    certbot:
-      container_name: mage-certbot
-      image: certbot/certbot
-      command: >
-        certonly --webroot 
-        --webroot-path /var/www/certbot/
-        --noninteractive --agree-tos
-        --email ${LETS_EMAIL} --no-eff-email
-        --cert-name scific -d ${LETS_DOMAIN}
-      volumes:
-        - ./letsencrypt/conf:/etc/letsencrypt:rw
-        - ./letsencrypt/acme:/var/www/certbot:rw
-      networks:
-        - mage
-      depends_on: nginx
+  certbot:
+    container_name: mage-certbot
+    image: certbot/certbot
+    command: >
+      certonly --webroot 
+      --webroot-path /var/www/certbot/
+      --noninteractive --agree-tos
+      --email ${LETS_EMAIL} --no-eff-email
+      --cert-name scific -d ${LETS_DOMAIN}
+    volumes:
+      - ./letsencrypt/conf:/etc/letsencrypt:rw
+      - ./letsencrypt/acme:/var/www/certbot:rw
+    networks:
+      - mage
+    depends_on:
+      - nginx
