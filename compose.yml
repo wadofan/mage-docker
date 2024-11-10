@@ -1,15 +1,11 @@
-networks:
-  scific:
-    driver: bridge
-
 services:
   apache:
     build: ./apache
     volumes:
-      - ./scific:/usr/local/apache2/htdocs
+      - ./webroot:/usr/local/apache2/htdocs
       - ./apache/logs:/usr/local/apache2/logs/httpd
     networks:
-      - scific
+      - clan
   
   nginx:
     image: nginx
@@ -19,4 +15,9 @@ services:
       - ./nginx/logs:/var/log/nginx
       - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
-      - scific
+      - clan
+
+networks:
+  clan:
+    driver: bridge
+
