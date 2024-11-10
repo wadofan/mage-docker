@@ -1,15 +1,10 @@
-networks:
-  mage:
-    name: mage-net
-    driver: bridge
-
 services:
   apache:
     container_name: mage-apache
     build: ./apache
     volumes:
       - ./apache/logs:/usr/local/apache2/logs/httpd:rw
-      - ./scific:/usr/local/apache2/htdocs:ro
+      - ./webroot:/usr/local/apache2/htdocs:ro
     networks:
       - mage
     restart: unless-stopped
@@ -45,3 +40,9 @@ services:
       - mage
     depends_on:
       - nginx
+
+networks:
+  mage:
+    name: mage-net
+    driver: bridge
+
