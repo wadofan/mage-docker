@@ -30,14 +30,14 @@ services:
     container_name: mage-certbot
     image: certbot/certbot
     command: >
-      certonly --reinstall --webroot 
-      --webroot-path /var/www/certbot/
-      --noninteractive --agree-tos
-      --email ${EMAIL} --no-eff-email
-      --cert-name mage -d ${DOMAIN}
+      certonly --reinstall --noninteractive 
+      --webroot --webroot-path /var/www/certbot/
+      --agree-tos --no-eff-email
+      --email ${EMAIL} -d ${DOMAIN}
     volumes:
       - ./letsencrypt/conf:/etc/letsencrypt:rw
       - ./letsencrypt/acme:/var/www/certbot:rw
+      - ./letsencrypt/logs:/var/log/letsencrypt:rw
     networks:
       - mage
     depends_on:
