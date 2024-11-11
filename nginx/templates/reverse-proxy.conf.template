@@ -5,7 +5,7 @@ upstream backend {
 server {
     listen              443 ssl default_server;
     listen              [::]:443;
-    server_name         ${DOMAIN};
+    server_name         ${CERT_DOMAIN};
 
     ssl_certificate     /etc/letsencrypt/live/mage/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/mage/privkey.pem;

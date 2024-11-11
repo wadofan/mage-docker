@@ -21,7 +21,7 @@ services:
       - ./letsencrypt/conf:/etc/letsencrypt:ro
       - ./letsencrypt/acme:/var/www/certbot:ro
     environment:
-      - DOMAIN
+      - CERT_DOMAIN
     networks:
       - mage
     restart: unless-stopped
@@ -33,7 +33,7 @@ services:
       certonly --reinstall --noninteractive 
       --webroot --webroot-path /var/www/certbot/
       --agree-tos --no-eff-email
-      --email ${EMAIL} -d ${DOMAIN}
+      --email ${CERT_EMAIL} -d ${CERT_DOMAIN}
     volumes:
       - ./letsencrypt/conf:/etc/letsencrypt:rw
       - ./letsencrypt/acme:/var/www/certbot:rw
@@ -47,4 +47,3 @@ networks:
   mage:
     name: mage-net
     driver: bridge
-
