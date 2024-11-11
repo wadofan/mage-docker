@@ -17,9 +17,11 @@ services:
       - 443:443
     volumes:
       - ./nginx/logs:/var/log/nginx:rw
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./letsencrypt/conf/live:/etc/nginx/cert.d:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./letsencrypt/conf:/etc/letsencrypt:ro
       - ./letsencrypt/acme:/var/www/certbot:ro
+    environment:
+      - DOMAIN
     networks:
       - mage
     restart: unless-stopped
@@ -28,11 +30,11 @@ services:
     container_name: mage-certbot
     image: certbot/certbot
     command: >
-      certonly --webroot 
+      certonly --reinstall --webroot 
       --webroot-path /var/www/certbot/
       --noninteractive --agree-tos
-      --email ${LETS_EMAIL} --no-eff-email
-      --cert-name scific -d ${LETS_DOMAIN}
+      --email ${EMAIL} --no-eff-email
+      --cert-name mage -d ${DOMAIN}
     volumes:
       - ./letsencrypt/conf:/etc/letsencrypt:rw
       - ./letsencrypt/acme:/var/www/certbot:rw

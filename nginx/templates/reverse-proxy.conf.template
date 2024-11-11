@@ -4,11 +4,11 @@ upstream backend {
 
 server {
     listen              443 ssl default_server;
-    listen              [::]:443
-    server_name         _;
+    listen              [::]:443;
+    server_name         ${DOMAIN};
 
-    ssl_certificate     /etc/nginx/cert.d/mage/fullchain.pem;
-    ssl_certificate_key /etc/nginx/cert.d/mage/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/mage/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mage/privkey.pem;
 
     location / {
         proxy_pass http://backend;
