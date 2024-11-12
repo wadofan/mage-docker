@@ -29,11 +29,13 @@ services:
   certbot:
     container_name: mage-certbot
     image: certbot/certbot
+    entrypoint: "/bin/sh -c"
     command: >
-      certonly --reinstall --noninteractive 
-      --webroot --webroot-path /var/www/certbot/
+      'trap exit TERM; while :; do
+      certbot renew --webroot --webroot-path /var/www/certbot/
       --agree-tos --no-eff-email
-      --email ${CERT_EMAIL} -d ${CERT_DOMAIN}
+      --email ${CERT_EMAIL} -d ${CERT_DOMAIN};
+      sleep 12h & wait $${!}; done;'
     volumes:
       - ./letsencrypt/conf:/etc/letsencrypt:rw
       - ./letsencrypt/acme:/var/www/certbot:rw
