@@ -18,28 +18,38 @@ services:
     volumes:
       - ./nginx/logs:/var/log/nginx:rw
       - ./nginx/templates:/etc/nginx/templates:ro
-      - ./letsencrypt/conf:/etc/letsencrypt:ro
-      - ./letsencrypt/acme:/var/www/certbot:ro
+      - ./letsencrypt/cert:/etc/letsencrypt:ro
+      - ./letsencrypt/web:/var/www/certbot:ro
     environment:
-      - CERT_DOMAIN
+      - CERT_DOMAIN=*****
     networks:
       - mage
     restart: unless-stopped
 
-  certbot:
-    container_name: mage-certbot
+  # start only ones to prepare a config
+  certbot-generate-cert:
     image: certbot/certbot
-    entrypoint: "/bin/sh -c"
-    command: >
-      'trap exit TERM; while :; do
-      certbot renew --webroot --webroot-path /var/www/certbot/
-      --agree-tos --no-eff-email
-      --email ${CERT_EMAIL} -d ${CERT_DOMAIN};
-      sleep 12h & wait $${!}; done;'
+    container_name: certbot-generate
+    environment:
+      - TZ=Europe/Kiev
+      - DOMAIN=
+      - EMAIL=
     volumes:
-      - ./letsencrypt/conf:/etc/letsencrypt:rw
-      - ./letsencrypt/acme:/var/www/certbot:rw
-      - ./letsencrypt/logs:/var/log/letsencrypt:rw
+      - ./letsencrypt/cert:/etc/letsencrypt:rw
+      - ./letsencrypt/web:/var/www/certbot:rw
+    entrypoint: "/bin/sh -c 'certbot certonly --webroot -w /var/www/certbot -d $${DOMAIN} --non-interactive --agree-tos --no-eff-email --email $${EMAIL}'"
+
+  # this container watch for cert expiry after you get a valid cert
+  certbot-watch:
+    container_name: certbot-watch
+    image: certbot/certbot
+    environment:
+      - TZ=Europe/Kiev
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ./letsencrypt/cert:/etc/letsencrypt:rw
+      - ./letsencrypt/web:/var/www/certbot:rw
+      # - ./letsencrypt/logs:/var/log/letsencrypt:rw
     networks:
       - mage
     depends_on:
