@@ -1,5 +1,6 @@
 services:
   apache:
+    profiles: ["run"]
     container_name: mage-apache
     build: ./apache
     volumes:
@@ -10,6 +11,7 @@ services:
     restart: unless-stopped
 
   nginx:
+    profiles: ["run"]
     container_name: mage-nginx
     image: nginx
     ports:
@@ -21,26 +23,13 @@ services:
       - ./letsencrypt/cert:/etc/letsencrypt:ro
       - ./letsencrypt/web:/var/www/certbot:ro
     environment:
-      - CERT_DOMAIN=*****
+      - CERT_DOMAIN=
     networks:
       - mage
     restart: unless-stopped
 
-  # start only ones to prepare a config
-  certbot-generate-cert:
-    image: certbot/certbot
-    container_name: certbot-generate
-    environment:
-      - TZ=Europe/Kiev
-      - DOMAIN=
-      - EMAIL=
-    volumes:
-      - ./letsencrypt/cert:/etc/letsencrypt:rw
-      - ./letsencrypt/web:/var/www/certbot:rw
-    entrypoint: "/bin/sh -c 'certbot certonly --webroot -w /var/www/certbot -d $${DOMAIN} --non-interactive --agree-tos --no-eff-email --email $${EMAIL}'"
-
-  # this container watch for cert expiry after you get a valid cert
   certbot-watch:
+    profiles: ["run"]
     container_name: certbot-watch
     image: certbot/certbot
     environment:
@@ -49,11 +38,26 @@ services:
     volumes:
       - ./letsencrypt/cert:/etc/letsencrypt:rw
       - ./letsencrypt/web:/var/www/certbot:rw
-      # - ./letsencrypt/logs:/var/log/letsencrypt:rw
     networks:
       - mage
     depends_on:
       - nginx
+
+  # this service only generates certificates and exits
+  certbot-generate-cert:
+    profiles: ["gen"]
+    image: certbot/certbot
+    container_name: certbot-generate
+    environment:
+      - TZ=Europe/Kiev
+      - DOMAIN=
+      - EMAIL=
+    ports:
+      - 80:80
+    volumes:
+      - ./letsencrypt/cert:/etc/letsencrypt:rw
+      - ./letsencrypt/web:/var/www/certbot:rw
+    entrypoint: "/bin/sh -c 'certbot certonly --standalone -d $${DOMAIN} --non-interactive --agree-tos --no-eff-email --email $${EMAIL}'"
 
 networks:
   mage:
