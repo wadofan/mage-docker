@@ -23,7 +23,7 @@ services:
       - ./letsencrypt/cert:/etc/letsencrypt:ro
       - ./letsencrypt/web:/var/www/certbot:ro
     environment:
-      - CERT_DOMAIN=
+      - CERT_DOMAIN
     networks:
       - mage
     restart: unless-stopped
@@ -50,8 +50,8 @@ services:
     container_name: certbot-generate
     environment:
       - TZ=Europe/Kiev
-      - DOMAIN=
-      - EMAIL=
+      - DOMAIN
+      - EMAIL
     ports:
       - 80:80
     volumes:
