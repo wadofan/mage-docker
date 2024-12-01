@@ -1,2 +1,4 @@
-logs/
-webroot/
+./webroot/
+./apache/logs/
+./nginx/logs/
+./letsencrypt/

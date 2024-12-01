@@ -23,7 +23,7 @@ services:
       - ./letsencrypt/cert:/etc/letsencrypt:ro
       - ./letsencrypt/web:/var/www/certbot:ro
     environment:
-      - CERT_DOMAIN
+      - DOMAIN
     networks:
       - mage
     restart: unless-stopped
